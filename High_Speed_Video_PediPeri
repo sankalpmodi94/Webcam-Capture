@@ -1,0 +1,43 @@
+import codeanticode.gsvideo.*;
+
+// Size of each cell in the grid
+int cellSize = 2;
+// Number of columns and rows in our system
+int cols, rows;
+// Variable for capture device
+GSCapture video;
+
+GSMovieMaker mm;
+int fps = 30;
+int i = 0;
+
+void setup() {
+  size(640, 480, P3D);
+  frameRate(60);
+
+  // Uses the default video input, see the reference if this causes an error
+  video = new GSCapture(this, 640, 480, 30);
+  
+  mm = new GSMovieMaker(this, 640, 480, "test.ogg", GSMovieMaker.THEORA, GSMovieMaker.MEDIUM, fps);
+  mm.setQueueSize(60, 10);
+  mm.start();
+  
+  video.start();
+  
+  background(0);
+}
+
+
+void draw() { 
+  if (video.available()) {
+    video.read();
+    video.loadPixels();
+    
+    image(video, 0, 0);
+    
+    loadPixels();
+    mm.addFrame(pixels);
+  }
+  println(frameRate);
+ 
+}

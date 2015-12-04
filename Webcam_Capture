@@ -1,0 +1,66 @@
+/***************************************
+THIS IS THE LATEST VERSION AS OF 4-Nov-2015
+Written By : Sankalp Modi, Dhruv Joshi.
+Project Name : Pediatric Perimeter
+Project Description : The Project is Intended to caliberate the field of vision and other few vision related issues in babies aged under a year.
+Program Description : This program is to be used as a simple operation to view and record the video data from the webcam at a resolution of 640*480 at 30 FPS. It saves the file as .OGG.
+Later these files can be viewed by the doctors as reference.
+>The video captured uses GSVideo Library, the recording starts and stops on the press of 'spacebar'.
+>The Quality of the Video is kept Medium and the file size remains small relative to other formats.
+*/
+
+import codeanticode.gsvideo.*;
+GSCapture video;
+GSMovieMaker mm;
+//Specifies the frame rate variable.
+int fps = 30;
+
+// Declaration of variable for 'toggle' use of 'Spacebar' for the start and stop of the video recording.
+boolean startStop = false;
+
+void setup() {
+  // Specify the video pixel and resolution.
+  size(640, 480, P3D);
+  frameRate(fps*2);
+    
+  video = new GSCapture(this, 640, 480, 30);
+  
+  
+// mm = new GSMovieMaker(this, width, height, "drawing.ogg", GSMovieMaker.THEORA, GSMovieMaker.MEDIUM, fps);
+//Currently OGG being used for the sake of low space consumption and compatibility with VLC.
+  mm = new GSMovieMaker(this, 640, 480, "test.ogg", GSMovieMaker.THEORA, GSMovieMaker.MEDIUM, fps);
+  mm.setQueueSize(60, 10);
+  
+  video.start();
+}  
+
+void draw() {
+  //check if the video is available
+  if (video.available()) {
+  // Read the video pixels from the camera
+    video.read();
+    video.loadPixels();
+    
+    image(video, 0, 0);
+    loadPixels();
+  //Add pixels from the capture stream to the MovieMaker'mm' Object so as to save it to the video file.
+    mm.addFrame(pixels);
+  }
+  println(frameRate);
+ 
+}
+// SpaceBar Toggle Use function
+void keyPressed() {
+  if (key == ' ') {
+    // check if the value of startstop variable is 0 or 1
+    if (startStop == false) {
+      //Start Capture
+      mm.start();
+      startStop = true;
+    } else {
+      //Stop Capture
+      mm.finish();
+      exit();
+    }
+  }  
+}
